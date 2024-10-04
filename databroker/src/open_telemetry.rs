@@ -4,13 +4,6 @@ use opentelemetry::trace::TraceError;
 use opentelemetry_otlp::WithExportConfig;
 
 pub fn init_trace() -> Result<trace::Tracer, TraceError> {
-
-    // let batch_processor = trace::BatchSpanProcessor::builder(exporter, runtime::Tokio)
-    //     .with_max_queue_size(2048)  // Increase queue size
-    //     .with_max_export_batch_size(512)  // Max batch size for exports
-    //     .with_scheduled_delay(std::time::Duration::from_millis(100))  // Export every 100ms
-    //     .build();
-
     opentelemetry_otlp::new_pipeline()
         .tracing()
         .with_exporter(
