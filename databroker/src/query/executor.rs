@@ -37,6 +37,8 @@ pub trait ExecutionInput {
 }
 
 impl CompiledQuery {
+
+    #[tracing::instrument(name="executor_execute_internal", skip(query, input), fields(timestamp=chrono::Utc::now().to_string()))]
     fn execute_internal(
         query: &CompiledQuery,
         input: &impl ExecutionInput,
@@ -157,6 +159,8 @@ impl CompiledQuery {
             Ok(None)
         }
     }
+
+    #[tracing::instrument(name="executor_execute", skip(self, input), fields(timestamp=chrono::Utc::now().to_string()))]
     pub fn execute(
         &self,
         input: &impl ExecutionInput,
@@ -166,6 +170,8 @@ impl CompiledQuery {
 }
 
 impl Expr {
+
+    #[tracing::instrument(name="execute", skip(self, input), fields(timestamp=chrono::Utc::now().to_string()))]
     pub fn execute(&self, input: &impl ExecutionInput) -> Result<DataValue, ExecutionError> {
         match &self {
             Expr::Datapoint {
@@ -396,6 +402,7 @@ impl ExecutionInput for ExecutionInputImpl {
         }
     }
 
+    #[tracing::instrument(name="executor_get_fields", skip(self), fields(timestamp=chrono::Utc::now().to_string()))]
     fn get_fields(&self) -> &HashMap<String, ExecutionInputImplData> {
         &self.fields
     }

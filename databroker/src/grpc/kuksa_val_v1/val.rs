@@ -361,7 +361,7 @@ impl proto::val_server::Val for broker::DataBroker {
         >,
     >;
 
-    #[tracing::instrument(name="subscribe", fields(timestamp=chrono::Utc::now().to_string()))]
+    #[tracing::instrument(name="subscribe",skip(self, request), fields(timestamp=chrono::Utc::now().to_string()))]
         async fn subscribe(
         &self,
         request: tonic::Request<proto::SubscribeRequest>,
@@ -485,7 +485,7 @@ impl proto::val_server::Val for broker::DataBroker {
 }
 
 
-#[tracing::instrument(name="val_convert_to_data_entry_error", fields(timestamp=chrono::Utc::now().to_string()))]
+#[tracing::instrument(name="val_convert_to_data_entry_error", skip(path, error), fields(timestamp=chrono::Utc::now().to_string()))]
 fn convert_to_data_entry_error(path: &String, error: &broker::UpdateError) -> DataEntryError {
     match error {
         broker::UpdateError::NotFound => DataEntryError {
@@ -539,7 +539,7 @@ fn convert_to_data_entry_error(path: &String, error: &broker::UpdateError) -> Da
     }
 }
 
-#[tracing::instrument(name = "val_convert_to_proto_stream", fields(timestamp=chrono::Utc::now().to_string()))]
+#[tracing::instrument(name = "val_convert_to_proto_stream", skip(input), fields(timestamp=chrono::Utc::now().to_string()))]
 fn convert_to_proto_stream(
     input: impl Stream<Item = broker::EntryUpdates> + std::fmt::Debug,
 ) -> impl Stream<Item = Result<proto::SubscribeResponse, tonic::Status>> {
@@ -715,7 +715,7 @@ fn combine_view_and_fields(
     combined
 }
 
-#[tracing::instrument(name="val_read_incoming_trace_id", fields(timestamp=chrono::Utc::now().to_string()))]
+#[tracing::instrument(name="val_read_incoming_trace_id", skip(request), fields(timestamp=chrono::Utc::now().to_string()))]
 fn read_incoming_trace_id(request: tonic::Request<proto::SetRequest>) -> (String, tonic::Request<proto::SetRequest>){
     let mut trace_id: String = String::from(""); 
     let request_copy = tonic::Request::new(request.get_ref().clone());
@@ -738,7 +738,7 @@ fn read_incoming_trace_id(request: tonic::Request<proto::SetRequest>) -> (String
     
 }
 impl broker::EntryUpdate {
-    #[tracing::instrument(name = "val_from_proto_entry_and_fields", fields(timestamp=chrono::Utc::now().to_string()))]
+    #[tracing::instrument(name = "val_from_proto_entry_and_fields",skip(entry,fields), fields(timestamp=chrono::Utc::now().to_string()))]
     fn from_proto_entry_and_fields(
         entry: &proto::DataEntry,
         fields: HashSet<proto::Field>,

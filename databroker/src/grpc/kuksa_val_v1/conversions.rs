@@ -236,7 +236,7 @@ impl From<broker::DataValue> for Option<proto::Datapoint> {
 }
 
 impl From<Option<proto::datapoint::Value>> for broker::DataValue {
-    #[tracing::instrument(name="conversion_From<Option<proto::datapoint::Value>>", fields(timestamp=chrono::Utc::now().to_string()))]
+    #[tracing::instrument(name="conversion_From<Option<proto::datapoint::Value>>", skip(from), fields(timestamp=chrono::Utc::now().to_string()))]
     fn from(from: Option<proto::datapoint::Value>) -> Self {
         match from {
             Some(value) => match value {
@@ -317,7 +317,7 @@ impl From<proto::Datapoint> for broker::Datapoint {
 }
 
 impl From<broker::EntryUpdate> for proto::DataEntry {
-    #[tracing::instrument(name="conversion_From<broker::EntryUpdate>", fields(timestamp=chrono::Utc::now().to_string()))]
+    #[tracing::instrument(name="conversion_From<broker::EntryUpdate>",skip(from), fields(timestamp=chrono::Utc::now().to_string()))]
     fn from(from: broker::EntryUpdate) -> Self {
         Self {
             path: from.path.unwrap_or_default(),
